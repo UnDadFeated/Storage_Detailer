@@ -175,6 +175,39 @@ def get_smart_info(drive_name):
         logging.error(f"SMART command failed for {drive_name}: {e}")
         return {"status": "Error"}
 
+def get_amazon_data(model):
+    if not model or str(model).strip() in ["", "N/A", "Unknown", "null"]:
+        return "Unknown", "Out of Stock"
+        
+    query = urllib.parse.quote_plus(model.strip().strip('\x00'))
+    url = f"https://www.amazon.com/s?k={query}"
+    
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+    }
+    
+    try:
+        ctx = ssl.create_default_context()
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=5, context=ctx) as response:
+            html = response.read().decode('utf-8')
+            
+            title_match = re.search(r'<span class="a-size-medium a-color-base a-text-normal"[^>]*>(.*?)</span>', html)
+            if not title_match:
+                title_match = re.search(r'<span class="a-size-base-plus a-color-base a-text-normal"[^>]*>(.*?)</span>', html)
+                
+            title = title_match.group(1).strip() if title_match else "Unknown Model"
+            
+            price_match = re.search(r'<span class="a-offscreen">(\$[\d,]+\.\d{2})</span>', html)
+            price = price_match.group(1).strip() if price_match else "Out of Stock"
+            
+            return title, price
+    except Exception as e:
+        logging.error(f"Amazon scrape failed: {e}")
+        return "Unknown", "Out of Stock"
+
 def get_web_info(model, serial):
     if not model or str(model).strip() in ["", "N/A", "Unknown", "null"]:
         return "Not enough info to search web."
@@ -201,4 +234,4 @@ def get_web_info(model, serial):
             return "No obvious specs found."
     except Exception as e:
         logging.error(f"Web scan failed: {e}")
-        return "Web scan failed or timed out."
+        return "Web scan failed."
