@@ -1,6 +1,9 @@
 # Conversation Log
 
 <!-- ANCHOR -->
+## 2026-03-19 12:58 PM
+- Removed PCPartPicker button from the UI to focus strictly on Amazon affiliate links per latest request.
+
 ## 2026-03-19 12:56 PM
 - Added Amazon Price check (w/ affiliate tag `mesarastarr-20`) and PCPartPicker price check buttons natively into the Web Intel UI pane to enable lightning-fast market research directly on the scanned model.
 - Analyzed SMART Permission Denied root cause (kernel locking raw block ioctl to root).

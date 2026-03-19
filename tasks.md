@@ -1,6 +1,9 @@
 # Tasks
 
 <!-- ANCHOR -->
+## 2026-03-19 12:58 PM
+- [x] Strip PCPartPicker integration per user request, keep only Amazon link.
+
 ## 2026-03-19 12:56 PM
 - [x] Integrate PCPartPicker Web Button
 - [x] Integrate Amazon affiliate link (`mesarastarr-20`) Button
