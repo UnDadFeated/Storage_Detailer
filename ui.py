@@ -3,7 +3,9 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QComboBox, QPushButton, QLabel, QFrame, QGridLayout, QProgressBar
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QThread
+from PyQt6.QtGui import QDesktopServices
+from PyQt6.QtCore import Qt, pyqtSignal, QThread, QUrl
+import urllib.parse
 from storage_backend import get_physical_drives, get_drive_details, get_smart_info, get_web_info, format_bytes
 
 STYLE_SHEET = """
@@ -222,9 +224,26 @@ class StorageDetailer(QMainWindow):
         self.data_layout.addWidget(self.wear_bar, 11, 5)
             
     def setup_web_area(self):
+        web_top_layout = QHBoxLayout()
+        web_top_layout.setContentsMargins(0, 0, 0, 0)
+        
         lbl_title = QLabel("Web Search Intel:")
         lbl_title.setObjectName("HeaderLabel")
-        self.layout.addWidget(lbl_title)
+        web_top_layout.addWidget(lbl_title, stretch=1)
+        
+        self.btn_amazon = QPushButton("Amazon Prices")
+        self.btn_amazon.clicked.connect(self.on_amazon_clicked)
+        self.btn_amazon.setEnabled(False)
+        self.btn_amazon.setFixedHeight(22)
+        web_top_layout.addWidget(self.btn_amazon)
+        
+        self.btn_pcpartpicker = QPushButton("PCPartPicker")
+        self.btn_pcpartpicker.clicked.connect(self.on_pcpartpicker_clicked)
+        self.btn_pcpartpicker.setEnabled(False)
+        self.btn_pcpartpicker.setFixedHeight(22)
+        web_top_layout.addWidget(self.btn_pcpartpicker)
+        
+        self.layout.addLayout(web_top_layout)
         
         self.web_label = QLabel("Waiting for scan...")
         self.web_label.setObjectName("WebInfoLabel")
@@ -260,6 +279,8 @@ class StorageDetailer(QMainWindow):
             
         self.scan_btn.setEnabled(False)
         self.scan_btn.setText("Scanning...")
+        self.btn_amazon.setEnabled(False)
+        self.btn_pcpartpicker.setEnabled(False)
         self.web_label.setText("Scanning the web and polling SMART data...")
         
         self.worker = WorkerThread(current_data)
@@ -270,6 +291,8 @@ class StorageDetailer(QMainWindow):
     def on_worker_finished(self, results):
         self.scan_btn.setEnabled(True)
         self.scan_btn.setText("Scan")
+        self.btn_amazon.setEnabled(True)
+        self.btn_pcpartpicker.setEnabled(True)
         
         details = results["details"]
         smart = results["smart"]
@@ -282,6 +305,20 @@ class StorageDetailer(QMainWindow):
         
         if smart:
             self.update_ui_with_smart(smart)
+            
+    def on_amazon_clicked(self):
+        model = self.labels["model"].text()
+        if model and model != "N/A":
+            query = urllib.parse.quote(model)
+            url = f"https://www.amazon.com/s?k={query}&tag=mesarastarr-20"
+            QDesktopServices.openUrl(QUrl(url))
+            
+    def on_pcpartpicker_clicked(self):
+        model = self.labels["model"].text()
+        if model and model != "N/A":
+            query = urllib.parse.quote(model)
+            url = f"https://pcpartpicker.com/search/?q={query}"
+            QDesktopServices.openUrl(QUrl(url))
             
     def update_ui_with_details(self, details):
         def _get(key, default="N/A"):

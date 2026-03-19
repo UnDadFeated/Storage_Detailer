@@ -1,6 +1,9 @@
 # TODO
 
 <!-- ANCHOR -->
+## 2026-03-19 12:56 PM
+- [x] Add eCommerce fast-links into Web Intel Area
+
 ## 2026-03-19 12:48 PM
 - [x] Refactor UI to 680x500 and 3 columns
 - [x] QThread integration

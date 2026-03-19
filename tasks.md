@@ -1,6 +1,10 @@
 # Tasks
 
 <!-- ANCHOR -->
+## 2026-03-19 12:56 PM
+- [x] Integrate PCPartPicker Web Button
+- [x] Integrate Amazon affiliate link (`mesarastarr-20`) Button
+
 ## 2026-03-19 12:48 PM
 - [x] Fix format_bytes and rota bug
 - [x] Limit lsblk output explicitly and check smartctl return code
