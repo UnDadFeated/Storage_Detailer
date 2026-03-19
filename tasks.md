@@ -2,6 +2,10 @@
 
 <!-- ANCHOR -->
 ## 2026-03-19 01:21 PM
+- [x] Bump `Storage Detailer` to v1.2 in `ui.py` and `README.md`.
+- [x] Update `README` features block logging the snapshot camera, Amazon linkage, and wear bar features.
+
+## 2026-03-19 01:21 PM
 - [x] Integrate snapshot GUI export function utilizing `QPixmap` bounding boxes to crop non-hardware analytics per user request for direct eBay attachments.
 
 ## 2026-03-19 01:14 PM

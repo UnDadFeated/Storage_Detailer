@@ -114,7 +114,7 @@ class WorkerThread(QThread):
 class StorageDetailer(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Storage Detailer v1.1")
+        self.setWindowTitle("Storage Detailer v1.2")
         self.setFixedSize(680, 500) 
         
         self.worker = None

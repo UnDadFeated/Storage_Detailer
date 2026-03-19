@@ -2,6 +2,10 @@
 
 <!-- ANCHOR -->
 ## 2026-03-19 01:21 PM
+- Bumped window title definition and README documentation to clearly report `v1.2` build numbers.
+- Integrated the hardware snapshot bounding box, wear progression layout, and base-10 URL injection features visibly internally to the public `README` block.
+
+## 2026-03-19 01:21 PM
 - Successfully generated a PyQt6 bounding box `QRect` cropped to cleanly ignore proprietary Web Intelligence rendering out exclusively the selected specific hardware dataset to `~/Pictures/Screenshots` when clicking the top frame camera icon.
 
 ## 2026-03-19 01:14 PM
