@@ -290,6 +290,7 @@ class StorageDetailer(QMainWindow):
                 screenshots_dir = pictures_dir
             else:
                 screenshots_dir = os.path.expanduser("~")
+        os.makedirs(screenshots_dir, exist_ok=True)
                 
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         model_name = self._current_model.replace(" ", "_") if self._current_model else "Drive"

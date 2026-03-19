@@ -1,6 +1,11 @@
 # Conversation Log
 
 <!-- ANCHOR -->
+## 2026-03-19 01:23 PM
+- Upgraded the Web Scraper CSS element detection targeting `result__body` fallback blocks whenever duckduckgo natively alters structure bounds ensuring intelligence accuracy remotely.
+- Integrated directory generation recursively securely locking GUI Snapshots into exactly the `~/Pictures/Screenshots` node guaranteeing exact save metrics.
+- Updated `README.md` to cleanly specify `pkexec` GUI behavior properly avoiding runtime surprises explicitly.
+
 ## 2026-03-19 01:21 PM
 - Bumped window title definition and README documentation to clearly report `v1.2` build numbers.
 - Integrated the hardware snapshot bounding box, wear progression layout, and base-10 URL injection features visibly internally to the public `README` block.

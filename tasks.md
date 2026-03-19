@@ -1,6 +1,11 @@
 # Tasks
 
 <!-- ANCHOR -->
+## 2026-03-19 01:23 PM
+- [x] Integrate `os.makedirs` path generation into UI screenshot pipeline correctly preventing silent file drops.
+- [x] Extend DDG HTML RegEx analysis to gracefully fall-back onto the native `result__body` snippet wrapper class dynamically guaranteeing Web queries accurately succeed despite CSS modifications remotely via DDG servers.
+- [x] Enhance PolKit `pkexec` GUI popup runtime documentation internally within the `README.md`.
+
 ## 2026-03-19 01:21 PM
 - [x] Bump `Storage Detailer` to v1.2 in `ui.py` and `README.md`.
 - [x] Update `README` features block logging the snapshot camera, Amazon linkage, and wear bar features.

@@ -14,6 +14,8 @@ Designed with a clean, low-profile grey scale theme with 1px silver accents. It 
 ## Recommended Setup (No Sudo Required)
 To allow Storage Detailer to read extensive SMART data without requiring `sudo` or root privileges every launch, add your user to the standard Linux `disk` group and add a udev rule to allow group read access to disks.
 
+*Note: If SMART metrics are locked natively, Storage Detailer will silently attempt `sudo -n` first, and intelligently fallback to `pkexec`. `pkexec` will spawn a standard PolKit GUI password dialog requesting explicit temporary permissions for `smartctl` execution if you choose to skip the recommended udev assignments natively.*
+
 1. Add your user to the `disk` group:
    ```bash
    sudo usermod -aG disk $USER

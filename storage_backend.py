@@ -189,6 +189,8 @@ def get_web_info(model, serial):
         with urllib.request.urlopen(req, timeout=5, context=ctx) as response:
             html = response.read().decode('utf-8')
             match = re.search(r'<a class="result__snippet[^>]*>(.*?)</a>', html, re.DOTALL | re.IGNORECASE)
+            if not match:
+                match = re.search(r'<a class="result__body[^>]*>(.*?)</a>', html, re.DOTALL | re.IGNORECASE)
             if match:
                 snippet = re.sub(r'<[^>]+>', '', match.group(1)).strip()
                 snippet = snippet.replace('&#39;', "'").replace('&quot;', '"').replace('&amp;', '&')

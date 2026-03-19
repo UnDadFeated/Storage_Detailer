@@ -1,6 +1,9 @@
 # TODO
 
 <!-- ANCHOR -->
+## 2026-03-19 01:23 PM
+- [x] Resolve outstanding edge-case logics ensuring bullet-proof v1.2 Release tracking.
+
 ## 2026-03-19 01:21 PM
 - [x] Bump Version and Update README
 
