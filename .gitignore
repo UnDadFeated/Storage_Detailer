@@ -1,8 +1,8 @@
-tasks.md
-todo.md
-conversation_log.md
-notes.md
-walkthrough.md
-implementation_plan.md
+TASKS.md
+TODO.md
+CONVERSATION_LOG.md
+NOTES.md
+WALKTHROUGH.md
+IMPLEMENTATION_PLAN.md
 __pycache__/
 *.pyc

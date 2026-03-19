@@ -144,18 +144,19 @@ class StorageDetailer(QMainWindow):
         
         self.drive_combo = QComboBox()
         self.drive_combo.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
+        self.drive_combo.setFixedHeight(24)
         top_layout.addWidget(self.drive_combo, stretch=1)
-        
-        self.btn_camera = QPushButton("📷")
-        self.btn_camera.setToolTip("Capture Snapshot for Export")
-        self.btn_camera.setFixedSize(28, 22)
-        self.btn_camera.clicked.connect(self.on_camera_clicked)
-        top_layout.addWidget(self.btn_camera)
         
         self.scan_btn = QPushButton("Scan")
         self.scan_btn.clicked.connect(self.on_scan_clicked)
-        self.scan_btn.setFixedWidth(100)
+        self.scan_btn.setFixedSize(100, 24)
         top_layout.addWidget(self.scan_btn)
+
+        self.btn_camera = QPushButton("Snapshot")
+        self.btn_camera.setToolTip("Capture Snapshot for Export")
+        self.btn_camera.setFixedSize(70, 24)
+        self.btn_camera.clicked.connect(self.on_camera_clicked)
+        top_layout.addWidget(self.btn_camera)
         
         self.layout.addLayout(top_layout)
         

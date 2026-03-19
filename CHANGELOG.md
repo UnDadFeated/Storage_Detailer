@@ -1,5 +1,6 @@
-# Changelog
+# CHANGELOG.md
 
+<!-- ANCHOR -->
 ## [1.2.0] - 2026-03-19
 ### Added
 - Instant Snapshot Export (📷 button) for cropped hardware stat images.
