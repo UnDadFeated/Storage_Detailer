@@ -1,6 +1,9 @@
 # TODO
 
 <!-- ANCHOR -->
+## 2026-03-19 01:14 PM
+- [x] Integrate mathematical manufacturer sizes into Amazon query strings.
+
 ## 2026-03-19 01:12 PM
 - [x] Fix `returncode & 1` bitmask error and remove Amazon Web Scraper.
 

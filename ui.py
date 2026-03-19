@@ -117,6 +117,7 @@ class StorageDetailer(QMainWindow):
         
         self.worker = None
         self._current_model = ""
+        self._current_capacity = ""
         
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -310,7 +311,10 @@ class StorageDetailer(QMainWindow):
             
     def on_amazon_clicked(self):
         if self._current_model:
-            query = urllib.parse.quote_plus(self._current_model.strip().strip('\x00'))
+            search_term = self._current_model.strip().strip('\x00')
+            if getattr(self, "_current_capacity", ""):
+                search_term += f" {self._current_capacity}"
+            query = urllib.parse.quote_plus(search_term)
             url = f"https://www.amazon.com/s?k={query}&tag=mesarastarr-20"
             QDesktopServices.openUrl(QUrl(url))
             
@@ -322,6 +326,18 @@ class StorageDetailer(QMainWindow):
         model_str = _get("model")
         self.labels["model"].setText(model_str)
         self._current_model = model_str
+        
+        try:
+            b = float(details.get("size", 0))
+            gb = b / 1_000_000_000
+            if gb >= 1000:
+                self._current_capacity = f"{round(gb/1000)}TB"
+            elif gb >= 1:
+                self._current_capacity = f"{round(gb)}GB"
+            else:
+                self._current_capacity = ""
+        except (ValueError, TypeError):
+            self._current_capacity = ""
         
         self.labels["vendor"].setText(_get("vendor"))
         self.labels["size"].setText(format_bytes(details.get("size")))

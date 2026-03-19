@@ -1,6 +1,9 @@
 # Tasks
 
 <!-- ANCHOR -->
+## 2026-03-19 01:14 PM
+- [x] Append raw marketed drive base-10 `size` capacity logic dynamically (e.g. 1TB, 2TB) to Amazon referral URLs for accurate query resolving.
+
 ## 2026-03-19 01:12 PM
 - [x] Correct fatal execution exit logics for `smartctl` returning positive health threshold bitmasks.
 - [x] Strip out Amazon bot/captcha unstable web scraper per request.

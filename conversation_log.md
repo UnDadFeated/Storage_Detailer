@@ -1,6 +1,10 @@
 # Conversation Log
 
 <!-- ANCHOR -->
+## 2026-03-19 01:14 PM
+- Evaluated `TRIM MAX` logic regarding capacity and confirmed it indicates strictly the maximum block discard size limit in cache, not disk width.
+- Extracted raw `lsblk -b` byte sizing constraints inside the `ui.py` parsing function to resolve base-10 drive capacities accurately mimicking hardware manufacturer metrics via simple div ops. (E.g. ~500GB, 2TB) dynamically concatenated explicitly to the Amazon query target strings.
+
 ## 2026-03-19 01:12 PM
 - Diagnosed fatal exit block from `smartctl` yielding error bitmasks corresponding to valid warnings (e.g., Code 4 Pre-fail). Dropped error threshold mask enforcement in favor of strictly validating json presence via `stdout.strip()`.
 - Addressed hanging thread locks implicitly occurring when piping silent `pkexec`/`sudo` routines lacking `-n` parameter bindings.
