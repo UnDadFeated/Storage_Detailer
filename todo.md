@@ -2,7 +2,7 @@
 
 <!-- ANCHOR -->
 ## 2026-03-19 12:38 PM
-- [ ] Initialize git
-- [ ] Write GUI layout
-- [ ] Write backend scraper
-- [ ] Test on CachyOS
+- [x] Initialize git
+- [x] Write GUI layout
+- [x] Write backend scraper
+- [x] Test on CachyOS
