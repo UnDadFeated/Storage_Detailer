@@ -1,6 +1,9 @@
 # Conversation Log
 
 <!-- ANCHOR -->
+## 2026-03-19 01:00 PM
+- Replaced the textual Amazon button with a succinct '🛒' shopping cart icon and added a localized tool-tip to keep the UI strictly minimalist.
+
 ## 2026-03-19 12:58 PM
 - Removed PCPartPicker button from the UI to focus strictly on Amazon affiliate links per latest request.
 

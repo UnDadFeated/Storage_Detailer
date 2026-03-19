@@ -1,6 +1,9 @@
 # Tasks
 
 <!-- ANCHOR -->
+## 2026-03-19 01:00 PM
+- [x] Change Amazon button to purely a shopping cart icon without text.
+
 ## 2026-03-19 12:58 PM
 - [x] Strip PCPartPicker integration per user request, keep only Amazon link.
 

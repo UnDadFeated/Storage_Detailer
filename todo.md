@@ -1,6 +1,9 @@
 # TODO
 
 <!-- ANCHOR -->
+## 2026-03-19 01:00 PM
+- [x] Update Amazon button UI icon
+
 ## 2026-03-19 12:56 PM
 - [x] Add eCommerce fast-links into Web Intel Area
 

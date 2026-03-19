@@ -231,10 +231,11 @@ class StorageDetailer(QMainWindow):
         lbl_title.setObjectName("HeaderLabel")
         web_top_layout.addWidget(lbl_title, stretch=1)
         
-        self.btn_amazon = QPushButton("Amazon Prices")
+        self.btn_amazon = QPushButton("🛒")
+        self.btn_amazon.setToolTip("Check Amazon Prices")
         self.btn_amazon.clicked.connect(self.on_amazon_clicked)
         self.btn_amazon.setEnabled(False)
-        self.btn_amazon.setFixedHeight(22)
+        self.btn_amazon.setFixedSize(32, 22)
         web_top_layout.addWidget(self.btn_amazon)
         
         self.layout.addLayout(web_top_layout)
