@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtCore import Qt, pyqtSignal, QThread, QUrl
 import urllib.parse
-from storage_backend import get_physical_drives, get_drive_details, get_smart_info, get_web_info, get_amazon_data, format_bytes
+from storage_backend import get_physical_drives, get_drive_details, get_smart_info, get_web_info, format_bytes
 
 STYLE_SHEET = """
 QWidget {
@@ -102,14 +102,11 @@ class WorkerThread(QThread):
              serial_val = details.get("serial", "")
              
         web = get_web_info(model_val, serial_val)
-        amz_title, amz_price = get_amazon_data(model_val)
         
         self.result_ready.emit({
             "details": details,
             "smart": smart,
-            "web": web,
-            "amz_title": amz_title,
-            "amz_price": amz_price
+            "web": web
         })
 
 class StorageDetailer(QMainWindow):
@@ -242,19 +239,12 @@ class StorageDetailer(QMainWindow):
         self.lbl_web_title.setObjectName("HeaderLabel")
         web_top_layout.addWidget(self.lbl_web_title)
         
-        self.lbl_amz_info = QLabel("")
-        self.lbl_amz_info.setStyleSheet("font-weight: bold; color: #ffffff;")
-        web_top_layout.addWidget(self.lbl_amz_info, stretch=1)
-        
-        lbl_buy = QLabel("buy on amazon")
-        lbl_buy.setStyleSheet("color: #a0a0a0; font-size: 10px;")
-        web_top_layout.addWidget(lbl_buy)
-        
-        self.btn_amazon = QPushButton("🛒")
+        self.btn_amazon = QPushButton("Amazon")
         self.btn_amazon.setToolTip("Buy on Amazon")
         self.btn_amazon.clicked.connect(self.on_amazon_clicked)
         self.btn_amazon.setEnabled(False)
-        self.btn_amazon.setFixedSize(32, 22)
+        self.btn_amazon.setFixedHeight(24)
+        self.btn_amazon.setMinimumWidth(60)
         web_top_layout.addWidget(self.btn_amazon)
         
         self.layout.addLayout(web_top_layout)
@@ -296,7 +286,6 @@ class StorageDetailer(QMainWindow):
         self.scan_btn.setText("Scanning...")
         self.btn_amazon.setEnabled(False)
         self.web_label.setText("Scanning the web and polling SMART data...")
-        self.lbl_amz_info.setText("Searching Amazon prices...")
         
         self.worker = WorkerThread(current_data)
         self.worker.result_ready.connect(self.on_worker_finished, Qt.ConnectionType.UniqueConnection)
@@ -310,17 +299,8 @@ class StorageDetailer(QMainWindow):
         details = results["details"]
         smart = results["smart"]
         web = results["web"]
-        amz_title = results.get("amz_title", "")
-        amz_price = results.get("amz_price", "")
         
         self.web_label.setText(web)
-        
-        if amz_title and amz_title != "Unknown":
-            if len(amz_title) > 40:
-                amz_title = amz_title[:37] + "..."
-            self.lbl_amz_info.setText(f"{amz_title} - {amz_price}")
-        else:
-            self.lbl_amz_info.setText(f"Price: {amz_price}")
         
         if details:
             self.update_ui_with_details(details)

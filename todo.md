@@ -1,6 +1,12 @@
 # TODO
 
 <!-- ANCHOR -->
+## 2026-03-19 01:12 PM
+- [x] Fix `returncode & 1` bitmask error and remove Amazon Web Scraper.
+
+## 2026-03-19 01:08 PM
+- [x] Scrape Amazon direct title & price into Web UI.
+
 ## 2026-03-19 01:05 PM
 - [x] Resolve SMART permissions fallbacks and Layout bugs.
 

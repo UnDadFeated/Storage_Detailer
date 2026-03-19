@@ -1,6 +1,16 @@
 # Conversation Log
 
 <!-- ANCHOR -->
+## 2026-03-19 01:12 PM
+- Diagnosed fatal exit block from `smartctl` yielding error bitmasks corresponding to valid warnings (e.g., Code 4 Pre-fail). Dropped error threshold mask enforcement in favor of strictly validating json presence via `stdout.strip()`.
+- Addressed hanging thread locks implicitly occurring when piping silent `pkexec`/`sudo` routines lacking `-n` parameter bindings.
+- Fully removed the unreliable direct Amazon Product HTML scraper entirely based on extensive review identifying perpetual 503 HTTP Bot drops.
+- Finalized Amazon button GUI constraints (x24y60), reissuing the `Amazon` text.
+
+## 2026-03-19 01:08 PM
+- Designed an Amazon direct-scraper inside `get_amazon_data` to bypass generalized search engines and rip live product identifiers and prices straight off the store.
+- Updated UI area layout injecting bolded Amazon product names and prices next to the "buy on amazon" right-aligned text label and cart button per user request.
+
 ## 2026-03-19 01:05 PM
 - Refactored SMART permission escalations natively integrating `sudo` and `pkexec` wrappers if standard `smartctl` execution rejects standard privileges. Documented `udev` solutions in README.
 - Perfected Amazon URL bindings utilizing strictly cached data and `quote_plus`.

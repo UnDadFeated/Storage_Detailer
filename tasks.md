@@ -1,6 +1,15 @@
 # Tasks
 
 <!-- ANCHOR -->
+## 2026-03-19 01:12 PM
+- [x] Correct fatal execution exit logics for `smartctl` returning positive health threshold bitmasks.
+- [x] Strip out Amazon bot/captcha unstable web scraper per request.
+- [x] Remodel UI restoring "Amazon" textual push button with 60px bounds strictly.
+
+## 2026-03-19 01:08 PM
+- [x] Integrate direct Amazon price and title scraping bypassing DDG for the Web UI.
+- [x] Restructure Amazon affiliate button layout with right-aligned "buy on amazon" text, cart icon, and live scraped data in bold.
+
 ## 2026-03-19 01:05 PM
 - [x] Fix exhaustive ui layout issues including wear bar and constraints.
 - [x] Add SMART sudo / pkexec fallbacks explicitly handling privileges.
