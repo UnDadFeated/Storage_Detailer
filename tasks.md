@@ -1,6 +1,11 @@
 # Tasks
 
 <!-- ANCHOR -->
+## 2026-03-19 01:05 PM
+- [x] Fix exhaustive ui layout issues including wear bar and constraints.
+- [x] Add SMART sudo / pkexec fallbacks explicitly handling privileges.
+- [x] Integrate safe `self._current_model` state tracking and URL quoting for Amazon.
+
 ## 2026-03-19 01:00 PM
 - [x] Change Amazon button to purely a shopping cart icon without text.
 

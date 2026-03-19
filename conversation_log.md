@@ -1,6 +1,11 @@
 # Conversation Log
 
 <!-- ANCHOR -->
+## 2026-03-19 01:05 PM
+- Refactored SMART permission escalations natively integrating `sudo` and `pkexec` wrappers if standard `smartctl` execution rejects standard privileges. Documented `udev` solutions in README.
+- Perfected Amazon URL bindings utilizing strictly cached data and `quote_plus`.
+- Remodelled UI structure setting static labels stretching constraints, breaking out the Wear QProgressBar cleanly, equalizing the 3x Drive Health grid.
+
 ## 2026-03-19 01:00 PM
 - Replaced the textual Amazon button with a succinct '🛒' shopping cart icon and added a localized tool-tip to keep the UI strictly minimalist.
 

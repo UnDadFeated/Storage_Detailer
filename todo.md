@@ -1,6 +1,9 @@
 # TODO
 
 <!-- ANCHOR -->
+## 2026-03-19 01:05 PM
+- [x] Resolve SMART permissions fallbacks and Layout bugs.
+
 ## 2026-03-19 01:00 PM
 - [x] Update Amazon button UI icon
 

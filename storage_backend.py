@@ -10,9 +10,7 @@ def format_bytes(n):
     if n is None or n == "":
         return "N/A"
     try:
-        # Handles strings cleanly
         if isinstance(n, str) and not n.isdigit() and not n.replace('.','',1).isdigit():
-            # Already formatted or non-numeric
             return str(n)
         
         val = float(n)
@@ -59,8 +57,32 @@ def get_drive_details(drive_name):
 def get_smart_info(drive_name):
     try:
         validate_drive_name(drive_name)
+        
+        def is_perm_denied(outp):
+            if not outp.strip():
+                return False
+            try:
+                d = json.loads(outp)
+                for msg in d.get("smartctl", {}).get("messages", []):
+                    if "Permission denied" in msg.get("string", "") or "Permission denied" in msg.get("string", ""):
+                        return True
+            except (ValueError, TypeError):
+                pass
+            return False
+
+        # 1. Standard approach
         cmd = ["smartctl", "-a", "-j", f"/dev/{drive_name}"]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
+        
+        # 2. Sudo fallback
+        if is_perm_denied(result.stdout) or result.returncode == 2:
+            cmd = ["sudo", "smartctl", "-a", "-j", f"/dev/{drive_name}"]
+            result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
+            
+        # 3. Pkexec fallback
+        if is_perm_denied(result.stdout) or result.returncode == 2:
+            cmd = ["pkexec", "smartctl", "-a", "-j", f"/dev/{drive_name}"]
+            result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
         
         if result.returncode & 1:
             return {"status": "Fatal Error", "error": "Command failed"}
@@ -70,10 +92,8 @@ def get_smart_info(drive_name):
             
         data = json.loads(result.stdout)
         
-        messages = data.get("smartctl", {}).get("messages", [])
-        for msg in messages:
-            if "Permission denied" in msg.get("string", ""):
-                return {"status": "Perm Denied"}
+        if is_perm_denied(result.stdout):
+            return {"status": "Perm Denied"}
 
         status = data.get("smart_status", {}).get("passed")
         if status is True:
@@ -130,6 +150,9 @@ def get_smart_info(drive_name):
         rpm = data.get("rotation_rate", "N/A")
         if str(rpm) == "0":
             rpm = "Solid State"
+            
+        ata_std = data.get("ata_version", {}).get("string", "N/A")
+        protocol = data.get("device", {}).get("protocol", "N/A")
 
         return {
             "status": status_str,
@@ -144,7 +167,9 @@ def get_smart_info(drive_name):
             "uncorrectable": str(uncorrectable),
             "wear_leveling": str(wear_leveling),
             "form_factor": str(form_factor),
-            "rpm": str(rpm)
+            "rpm": str(rpm),
+            "ata_std": str(ata_std),
+            "protocol": str(protocol)
         }
     except Exception as e:
         logging.error(f"SMART command failed for {drive_name}: {e}")
@@ -155,7 +180,7 @@ def get_web_info(model, serial):
         return "Not enough info to search web."
         
     query = f"{model} ssd hdd specs"
-    url = "https://html.duckduckgo.com/html/?q=" + urllib.parse.quote(query)
+    url = "https://html.duckduckgo.com/html/?q=" + urllib.parse.quote_plus(query)
     
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'

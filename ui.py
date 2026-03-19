@@ -56,7 +56,7 @@ QLabel {
 QLabel#ValueLabel {
     color: #ffffff;
     font-weight: bold;
-    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-family: 'Noto Mono', 'JetBrains Mono', 'Consolas', monospace;
 }
 QLabel#HeaderLabel {
     color: #a0a0a0;
@@ -76,7 +76,8 @@ QProgressBar {
     border-radius: 2px;
     text-align: center;
     background-color: #333333;
-    height: 8px;
+    color: #ffffff;
+    font-family: 'Noto Mono', 'JetBrains Mono', 'Consolas', monospace;
 }
 QProgressBar::chunk {
     background-color: #44ff88;
@@ -94,7 +95,6 @@ class WorkerThread(QThread):
         details = get_drive_details(self.drive_name)
         smart = get_smart_info(self.drive_name)
         
-        # Determine model and serial
         model_val = ""
         serial_val = ""
         if details:
@@ -112,11 +112,11 @@ class WorkerThread(QThread):
 class StorageDetailer(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Storage Detailer v1.1 - Extended Health")
-        # Expanded to hold 3 columns safety per user request
+        self.setWindowTitle("Storage Detailer v1.1")
         self.setFixedSize(680, 500) 
         
         self.worker = None
+        self._current_model = ""
         
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -127,6 +127,7 @@ class StorageDetailer(QMainWindow):
         
         self.setup_top_bar()
         self.setup_data_area()
+        self.setup_wear_bar()
         self.setup_web_area()
         
         self.setStyleSheet(STYLE_SHEET)
@@ -158,6 +159,11 @@ class StorageDetailer(QMainWindow):
         self.data_layout.setHorizontalSpacing(20)
         self.data_layout.setVerticalSpacing(8)
         
+        # Explicit minimum widths for proper stretching
+        self.data_layout.setColumnMinimumWidth(0, 90)
+        self.data_layout.setColumnMinimumWidth(2, 90)
+        self.data_layout.setColumnMinimumWidth(4, 90)
+        
         self.layout.addWidget(self.data_frame)
         
         self.labels = {}
@@ -186,6 +192,8 @@ class StorageDetailer(QMainWindow):
             ("TRIM Granular:", "disc-gran", 6, 2),
             ("TRIM Max:", "disc-max", 7, 2),
             ("TRIM Zero:", "disc-zero", 8, 2),
+            ("ATA Standard:", "ata_std", 9, 2),
+            ("Protocol:", "protocol", 10, 2),
             
             # Col 3 (Drive Health - SMART)
             ("SMART Status:", "smart_status", 0, 4),
@@ -210,18 +218,22 @@ class StorageDetailer(QMainWindow):
             self.data_layout.addWidget(lbl_title, row, col)
             self.data_layout.addWidget(lbl_val, row, col+1)
             self.labels[key] = lbl_val
-            
-        # Add a custom wear progress bar spanning column 3 below status ideally, 
-        # or replacing 'NVMe % Used' value? We'll put it in row 11 across col 4+5
+
+    def setup_wear_bar(self):
+        wear_layout = QHBoxLayout()
+        wear_layout.setContentsMargins(5, 5, 5, 5)
+        lbl_wear_title = QLabel("Drive Wear:")
+        lbl_wear_title.setObjectName("HeaderLabel")
+        wear_layout.addWidget(lbl_wear_title)
+        
         self.wear_bar = QProgressBar()
         self.wear_bar.setRange(0, 100)
         self.wear_bar.setValue(0)
-        self.wear_bar.setTextVisible(False)
-        self.wear_bar.setFixedHeight(8)
-        lbl_wear_title = QLabel("Wear Level:")
-        lbl_wear_title.setObjectName("HeaderLabel")
-        self.data_layout.addWidget(lbl_wear_title, 11, 4)
-        self.data_layout.addWidget(self.wear_bar, 11, 5)
+        self.wear_bar.setFixedHeight(14)
+        self.wear_bar.setTextVisible(True)
+        self.wear_bar.setFormat("Wear: %p%")
+        wear_layout.addWidget(self.wear_bar, stretch=1)
+        self.layout.addLayout(wear_layout)
             
     def setup_web_area(self):
         web_top_layout = QHBoxLayout()
@@ -231,11 +243,12 @@ class StorageDetailer(QMainWindow):
         lbl_title.setObjectName("HeaderLabel")
         web_top_layout.addWidget(lbl_title, stretch=1)
         
-        self.btn_amazon = QPushButton("🛒")
+        self.btn_amazon = QPushButton("Amazon")
         self.btn_amazon.setToolTip("Check Amazon Prices")
         self.btn_amazon.clicked.connect(self.on_amazon_clicked)
         self.btn_amazon.setEnabled(False)
-        self.btn_amazon.setFixedSize(32, 22)
+        self.btn_amazon.setFixedHeight(24)
+        self.btn_amazon.setMinimumWidth(50)
         web_top_layout.addWidget(self.btn_amazon)
         
         self.layout.addLayout(web_top_layout)
@@ -244,8 +257,9 @@ class StorageDetailer(QMainWindow):
         self.web_label.setObjectName("WebInfoLabel")
         self.web_label.setWordWrap(True)
         self.web_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        # Fixed height approx
-        self.web_label.setFixedHeight(45)
+        # Bounded height to ensure fluid fit within windows bounds securely
+        self.web_label.setMinimumHeight(40)
+        self.web_label.setMaximumHeight(58)
         self.layout.addWidget(self.web_label)
 
     def refresh_drives(self):
@@ -268,9 +282,9 @@ class StorageDetailer(QMainWindow):
         if not current_data:
             return
             
-        # UI State Guard
         if self.worker and self.worker.isRunning():
-            return
+            self.worker.quit()
+            self.worker.wait()
             
         self.scan_btn.setEnabled(False)
         self.scan_btn.setText("Scanning...")
@@ -278,7 +292,6 @@ class StorageDetailer(QMainWindow):
         self.web_label.setText("Scanning the web and polling SMART data...")
         
         self.worker = WorkerThread(current_data)
-        # Safely bind unique connection
         self.worker.result_ready.connect(self.on_worker_finished, Qt.ConnectionType.UniqueConnection)
         self.worker.start()
 
@@ -300,9 +313,8 @@ class StorageDetailer(QMainWindow):
             self.update_ui_with_smart(smart)
             
     def on_amazon_clicked(self):
-        model = self.labels["model"].text()
-        if model and model != "N/A":
-            query = urllib.parse.quote(model)
+        if self._current_model:
+            query = urllib.parse.quote_plus(self._current_model.strip().strip('\x00'))
             url = f"https://www.amazon.com/s?k={query}&tag=mesarastarr-20"
             QDesktopServices.openUrl(QUrl(url))
             
@@ -311,7 +323,10 @@ class StorageDetailer(QMainWindow):
             val = details.get(key)
             return str(val).strip() if val else default
             
-        self.labels["model"].setText(_get("model"))
+        model_str = _get("model")
+        self.labels["model"].setText(model_str)
+        self._current_model = model_str
+        
         self.labels["vendor"].setText(_get("vendor"))
         self.labels["size"].setText(format_bytes(details.get("size")))
         self.labels["tran"].setText(str(_get("tran")).upper())
@@ -343,11 +358,11 @@ class StorageDetailer(QMainWindow):
         status = smart.get("status", "Unknown")
         self.labels["smart_status"].setText(status)
         if status == "PASSED":
-            self.labels["smart_status"].setStyleSheet("color: #44ff88;") # Green
+            self.labels["smart_status"].setStyleSheet("color: #44ff88;")
         elif status == "FAILED":
-            self.labels["smart_status"].setStyleSheet("color: #ff4444;") # Red
+            self.labels["smart_status"].setStyleSheet("color: #ff4444;")
         else:
-            self.labels["smart_status"].setStyleSheet("color: #ffaa44;") # Orange
+            self.labels["smart_status"].setStyleSheet("color: #ffaa44;")
             
         self.labels["smart_temp"].setText(smart.get("temp", "N/A"))
         self.labels["smart_poh"].setText(smart.get("power_on_hours", "N/A"))
@@ -361,6 +376,8 @@ class StorageDetailer(QMainWindow):
         self.labels["avail_spare"].setText(smart.get("avail_spare", "N/A"))
         self.labels["form_factor"].setText(smart.get("form_factor", "N/A"))
         self.labels["rpm"].setText(smart.get("rpm", "N/A"))
+        self.labels["ata_std"].setText(smart.get("ata_std", "N/A"))
+        self.labels["protocol"].setText(smart.get("protocol", "N/A"))
         
         # Wear bar logic (NVMe % used usually)
         pct = smart.get("pct_used", "N/A")
@@ -375,7 +392,7 @@ class StorageDetailer(QMainWindow):
                     self.wear_bar.setStyleSheet("QProgressBar::chunk { background-color: #ffaa44; }")
                 else:
                     self.wear_bar.setStyleSheet("QProgressBar::chunk { background-color: #ff4444; }")
-            except:
+            except (ValueError, TypeError):
                 self.wear_bar.setValue(0)
         else:
             self.wear_bar.setValue(0)
