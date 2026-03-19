@@ -124,9 +124,9 @@ class StorageDetailer(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         
-        self.layout = QVBoxLayout(self.central_widget)
-        self.layout.setContentsMargins(10, 10, 10, 10)
-        self.layout.setSpacing(8)
+        self.main_layout = QVBoxLayout(self.central_widget)
+        self.main_layout.setContentsMargins(10, 10, 10, 10)
+        self.main_layout.setSpacing(8)
         
         self.setup_top_bar()
         self.setup_data_area()
@@ -158,7 +158,7 @@ class StorageDetailer(QMainWindow):
         self.btn_camera.clicked.connect(self.on_camera_clicked)
         top_layout.addWidget(self.btn_camera)
         
-        self.layout.addLayout(top_layout)
+        self.main_layout.addLayout(top_layout)
         
     def setup_data_area(self):
         self.data_frame = QFrame()
@@ -173,7 +173,7 @@ class StorageDetailer(QMainWindow):
         self.data_layout.setColumnMinimumWidth(2, 90)
         self.data_layout.setColumnMinimumWidth(4, 90)
         
-        self.layout.addWidget(self.data_frame)
+        self.main_layout.addWidget(self.data_frame)
         
         self.labels = {}
         
@@ -239,7 +239,7 @@ class StorageDetailer(QMainWindow):
         self.wear_bar.setTextVisible(True)
         self.wear_bar.setFormat("Wear: %p%")
         wear_layout.addWidget(self.wear_bar, stretch=1)
-        self.layout.addLayout(wear_layout)
+        self.main_layout.addLayout(wear_layout)
             
     def setup_web_area(self):
         web_top_layout = QHBoxLayout()
@@ -257,7 +257,7 @@ class StorageDetailer(QMainWindow):
         self.btn_amazon.setMinimumWidth(60)
         web_top_layout.addWidget(self.btn_amazon)
         
-        self.layout.addLayout(web_top_layout)
+        self.main_layout.addLayout(web_top_layout)
         
         self.web_label = QLabel("Waiting for scan...")
         self.web_label.setObjectName("WebInfoLabel")
@@ -266,7 +266,7 @@ class StorageDetailer(QMainWindow):
         # Bounded height to ensure fluid fit within windows bounds securely
         self.web_label.setMinimumHeight(40)
         self.web_label.setMaximumHeight(58)
-        self.layout.addWidget(self.web_label)
+        self.main_layout.addWidget(self.web_label)
 
     def refresh_drives(self):
         self.drive_combo.clear()
@@ -313,8 +313,7 @@ class StorageDetailer(QMainWindow):
             return
             
         if self.worker and self.worker.isRunning():
-            self.worker.quit()
-            self.worker.wait()
+            return
             
         self.scan_btn.setEnabled(False)
         self.scan_btn.setText("Scanning...")
