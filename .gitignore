@@ -1,3 +1,8 @@
+tasks.md
+todo.md
+conversation_log.md
+notes.md
+walkthrough.md
+implementation_plan.md
 __pycache__/
 *.pyc
-.env
