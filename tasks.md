@@ -1,6 +1,9 @@
 # Tasks
 
 <!-- ANCHOR -->
+## 2026-03-19 01:21 PM
+- [x] Integrate snapshot GUI export function utilizing `QPixmap` bounding boxes to crop non-hardware analytics per user request for direct eBay attachments.
+
 ## 2026-03-19 01:14 PM
 - [x] Append raw marketed drive base-10 `size` capacity logic dynamically (e.g. 1TB, 2TB) to Amazon referral URLs for accurate query resolving.
 

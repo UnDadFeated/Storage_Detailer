@@ -4,8 +4,10 @@ from PyQt6.QtWidgets import (
     QComboBox, QPushButton, QLabel, QFrame, QGridLayout, QProgressBar
 )
 from PyQt6.QtGui import QDesktopServices
-from PyQt6.QtCore import Qt, pyqtSignal, QThread, QUrl
+from PyQt6.QtCore import Qt, pyqtSignal, QThread, QUrl, QRect
 import urllib.parse
+import os
+from datetime import datetime
 from storage_backend import get_physical_drives, get_drive_details, get_smart_info, get_web_info, format_bytes
 
 STYLE_SHEET = """
@@ -144,6 +146,12 @@ class StorageDetailer(QMainWindow):
         self.drive_combo.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
         top_layout.addWidget(self.drive_combo, stretch=1)
         
+        self.btn_camera = QPushButton("📷")
+        self.btn_camera.setToolTip("Capture Snapshot for Export")
+        self.btn_camera.setFixedSize(28, 22)
+        self.btn_camera.clicked.connect(self.on_camera_clicked)
+        top_layout.addWidget(self.btn_camera)
+        
         self.scan_btn = QPushButton("Scan")
         self.scan_btn.clicked.connect(self.on_scan_clicked)
         self.scan_btn.setFixedWidth(100)
@@ -274,6 +282,29 @@ class StorageDetailer(QMainWindow):
         if self.drive_combo.count() > 0:
             self.on_scan_clicked()
             
+    def on_camera_clicked(self):
+        pictures_dir = os.path.expanduser("~/Pictures")
+        screenshots_dir = os.path.join(pictures_dir, "Screenshots")
+        if not os.path.exists(screenshots_dir):
+            if os.path.exists(pictures_dir):
+                screenshots_dir = pictures_dir
+            else:
+                screenshots_dir = os.path.expanduser("~")
+                
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        model_name = self._current_model.replace(" ", "_") if self._current_model else "Drive"
+        filename = f"StorageDetailer_{model_name}_{timestamp}.png"
+        filepath = os.path.join(screenshots_dir, filename)
+        
+        crop_h = self.wear_bar.geometry().bottom() + 15
+        rect = self.central_widget.rect()
+        rect.setHeight(min(crop_h, rect.height()))
+        
+        pixmap = self.central_widget.grab(rect)
+        pixmap.save(filepath, "PNG")
+        
+        self.web_label.setText(f"Snapshot securely saved to:\n{filepath}")
+
     def on_scan_clicked(self):
         current_data = self.drive_combo.currentData()
         if not current_data:

@@ -1,6 +1,9 @@
 # TODO
 
 <!-- ANCHOR -->
+## 2026-03-19 01:21 PM
+- [x] Implement cropped GUI snapshot functionality for eCommerce reporting.
+
 ## 2026-03-19 01:14 PM
 - [x] Integrate mathematical manufacturer sizes into Amazon query strings.
 

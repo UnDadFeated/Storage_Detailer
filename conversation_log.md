@@ -1,6 +1,9 @@
 # Conversation Log
 
 <!-- ANCHOR -->
+## 2026-03-19 01:21 PM
+- Successfully generated a PyQt6 bounding box `QRect` cropped to cleanly ignore proprietary Web Intelligence rendering out exclusively the selected specific hardware dataset to `~/Pictures/Screenshots` when clicking the top frame camera icon.
+
 ## 2026-03-19 01:14 PM
 - Evaluated `TRIM MAX` logic regarding capacity and confirmed it indicates strictly the maximum block discard size limit in cache, not disk width.
 - Extracted raw `lsblk -b` byte sizing constraints inside the `ui.py` parsing function to resolve base-10 drive capacities accurately mimicking hardware manufacturer metrics via simple div ops. (E.g. ~500GB, 2TB) dynamically concatenated explicitly to the Amazon query target strings.
