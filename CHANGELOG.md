@@ -1,6 +1,11 @@
 # CHANGELOG.md
 
 <!-- ANCHOR -->
+## [1.2.1] - 2026-03-19
+### Fixed
+- Unblocked main thread execution loop freezes resolving implicit Qt signals sequentially.
+- Sanitized `self.layout` definitions structurally preventing internal namespace conflicts against standard PyQt inheritance trees internally natively mapping them to `self.main_layout`.
+
 ## [1.2.0] - 2026-03-19
 ### Added
 - Instant Snapshot Export (📷 button) for cropped hardware stat images.

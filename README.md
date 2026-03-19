@@ -6,7 +6,7 @@
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square)
 ![PyQt6](https://img.shields.io/badge/UI-PyQt6-informational?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![Version](https://img.shields.io/badge/version-1.2.0-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.2.1-orange?style=flat-square)
 
 Storage Detailer extracts deep hardware telemetry from your connected storage devices and presents it in a dense, scrollbar-free interface. No bloat. No electron. No nonsense — just raw drive data, fast.
 
