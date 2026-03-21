@@ -1,6 +1,11 @@
 # CHANGELOG.md
 
 <!-- ANCHOR -->
+## [1.3.0] - 2026-03-20
+### Added
+- Cross-platform Windows compatibility in `storage_backend.py` via PowerShell/WMI fallback mechanism.
+- Created "About" UI dialog providing version and application info.
+
 ## [1.2.1] - 2026-03-19
 ### Fixed
 - Unblocked main thread execution loop freezes resolving implicit Qt signals sequentially.

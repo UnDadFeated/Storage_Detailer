@@ -114,7 +114,7 @@ class WorkerThread(QThread):
 class StorageDetailer(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Storage Detailer v1.2.1")
+        self.setWindowTitle("Storage Detailer v1.3.0")
         self.setFixedSize(680, 500) 
         
         self.worker = None
@@ -157,6 +157,12 @@ class StorageDetailer(QMainWindow):
         self.btn_camera.setFixedSize(70, 24)
         self.btn_camera.clicked.connect(self.on_camera_clicked)
         top_layout.addWidget(self.btn_camera)
+        
+        self.btn_about = QPushButton("About")
+        self.btn_about.setToolTip("About Storage Detailer")
+        self.btn_about.setFixedSize(60, 24)
+        self.btn_about.clicked.connect(self.on_about_clicked)
+        top_layout.addWidget(self.btn_about)
         
         self.main_layout.addLayout(top_layout)
         
@@ -277,7 +283,10 @@ class StorageDetailer(QMainWindow):
             size = format_bytes(d.get("size"))
             tran = d.get("tran", "")
             
-            display_text = f"/dev/{name} - {model} ({size}) [{tran}]"
+            if name.startswith("PhysicalDrive"):
+                display_text = f"{name} - {model} ({size}) [{tran}]"
+            else:
+                display_text = f"/dev/{name} - {model} ({size}) [{tran}]"
             self.drive_combo.addItem(display_text, userData=name)
             
         if self.drive_combo.count() > 0:
@@ -349,6 +358,15 @@ class StorageDetailer(QMainWindow):
             query = urllib.parse.quote_plus(search_term)
             url = f"https://www.amazon.com/s?k={query}&tag=mesarastarr-20"
             QDesktopServices.openUrl(QUrl(url))
+            
+    def on_about_clicked(self):
+        from PyQt6.QtWidgets import QMessageBox
+        msg = QMessageBox(self)
+        msg.setWindowTitle("About Storage Detailer")
+        msg.setText("<h2>Storage Detailer v1.3.0</h2>"
+                    "<p>A cross-platform storage analysis tool.</p>"
+                    "<p>Created by UnDadFeated.</p>")
+        msg.exec()
             
     def update_ui_with_details(self, details):
         def _get(key, default="N/A"):

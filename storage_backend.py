@@ -5,6 +5,7 @@ import urllib.request
 import urllib.parse
 import re
 import ssl
+import sys
 
 def format_bytes(n):
     if n is None or n == "":
@@ -28,13 +29,34 @@ def validate_drive_name(drive_name):
 
 def get_physical_drives():
     try:
-        cmd = ["lsblk", "-J", "-d", "-b", "-o", "NAME,MODEL,VENDOR,REV,SERIAL,WWN,SIZE,TRAN,ROTA,SCHED,PATH,RQ-SIZE,LOG-SEC,PHY-SEC,MIN-IO,OPT-IO,DISC-GRAN,DISC-MAX,DISC-ZERO,TYPE"]
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        data = json.loads(result.stdout)
-        
-        devices = data.get("blockdevices", [])
-        physical_drives = [d for d in devices if str(d.get("type", "")).lower() == "disk" and not str(d.get("name", "")).startswith("zram")]
-        return physical_drives
+        if sys.platform == "win32":
+            cmd = ["powershell", "-NoProfile", "-Command", "Get-PhysicalDisk | Select-Object DeviceID,Model,Size,BusType,MediaType | ConvertTo-Json"]
+            creation_flags = 0x08000000 # CREATE_NO_WINDOW
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True, creationflags=creation_flags)
+            if not result.stdout.strip():
+                return []
+            data = json.loads(result.stdout)
+            if isinstance(data, dict):
+                data = [data]
+            
+            physical_drives = []
+            for d in data:
+                physical_drives.append({
+                    "name": f"PhysicalDrive{d.get('DeviceID')}",
+                    "model": str(d.get("Model", "")).strip(),
+                    "size": str(d.get("Size", "0")),
+                    "tran": str(d.get("BusType", "")).strip().lower(),
+                    "type": "disk"
+                })
+            return physical_drives
+        else:
+            cmd = ["lsblk", "-J", "-d", "-b", "-o", "NAME,MODEL,VENDOR,REV,SERIAL,WWN,SIZE,TRAN,ROTA,SCHED,PATH,RQ-SIZE,LOG-SEC,PHY-SEC,MIN-IO,OPT-IO,DISC-GRAN,DISC-MAX,DISC-ZERO,TYPE"]
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            data = json.loads(result.stdout)
+            
+            devices = data.get("blockdevices", [])
+            physical_drives = [d for d in devices if str(d.get("type", "")).lower() == "disk" and not str(d.get("name", "")).startswith("zram")]
+            return physical_drives
     except Exception as e:
         logging.error(f"Failed to scan drives: {e}")
         return []
@@ -42,14 +64,34 @@ def get_physical_drives():
 def get_drive_details(drive_name):
     try:
         validate_drive_name(drive_name)
-        cmd = ["lsblk", "-p", "-J", "-b", "-o", "NAME,MODEL,VENDOR,REV,SERIAL,WWN,SIZE,TRAN,ROTA,SCHED,PATH,RQ-SIZE,LOG-SEC,PHY-SEC,MIN-IO,OPT-IO,DISC-GRAN,DISC-MAX,DISC-ZERO", f"/dev/{drive_name}"]
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        data = json.loads(result.stdout)
-        
-        devices = data.get("blockdevices", [])
-        if devices:
-            return devices[0]
-        return None
+        if sys.platform == "win32":
+            device_id = str(drive_name).replace("PhysicalDrive", "")
+            cmd = ["powershell", "-NoProfile", "-Command", f"Get-PhysicalDisk | Where-Object DeviceID -eq '{device_id}' | Select-Object DeviceID,Model,Size,BusType,MediaType | ConvertTo-Json"]
+            creation_flags = 0x08000000
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True, creationflags=creation_flags)
+            if not result.stdout.strip():
+                return None
+            d = json.loads(result.stdout)
+            if isinstance(d, list):
+                d = d[0] if d else {}
+            
+            rota = "0" if str(d.get("MediaType")) == "SSD" else "1"
+            return {
+                "name": f"PhysicalDrive{d.get('DeviceID')}",
+                "model": str(d.get("Model", "")).strip(),
+                "size": str(d.get("Size", "0")),
+                "tran": str(d.get("BusType", "")).strip().lower(),
+                "rota": rota
+            }
+        else:
+            cmd = ["lsblk", "-p", "-J", "-b", "-o", "NAME,MODEL,VENDOR,REV,SERIAL,WWN,SIZE,TRAN,ROTA,SCHED,PATH,RQ-SIZE,LOG-SEC,PHY-SEC,MIN-IO,OPT-IO,DISC-GRAN,DISC-MAX,DISC-ZERO", f"/dev/{drive_name}"]
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            data = json.loads(result.stdout)
+            
+            devices = data.get("blockdevices", [])
+            if devices:
+                return devices[0]
+            return None
     except Exception as e:
         logging.error(f"Failed to get drive details for {drive_name}: {e}")
         return None
@@ -71,18 +113,25 @@ def get_smart_info(drive_name):
             return False
 
         # 1. Standard approach
-        cmd = ["smartctl", "-a", "-j", f"/dev/{drive_name}"]
-        result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
-        
-        # 2. Sudo fallback
-        if not result.stdout.strip() or result.returncode == 2 or is_perm_denied(result.stdout):
-            cmd = ["sudo", "-n", "smartctl", "-a", "-j", f"/dev/{drive_name}"]
+        if sys.platform == "win32":
+            device_id = str(drive_name).replace("PhysicalDrive", "")
+            target_drive = f"/dev/pd{device_id}"
+            creation_flags = 0x08000000
+            cmd = ["smartctl", "-a", "-j", target_drive]
+            result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL, creationflags=creation_flags)
+        else:
+            cmd = ["smartctl", "-a", "-j", f"/dev/{drive_name}"]
             result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
             
-        # 3. Pkexec fallback
-        if not result.stdout.strip() or result.returncode == 2 or is_perm_denied(result.stdout):
-            cmd = ["pkexec", "smartctl", "-a", "-j", f"/dev/{drive_name}"]
-            result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
+            # 2. Sudo fallback
+            if not result.stdout.strip() or result.returncode == 2 or is_perm_denied(result.stdout):
+                cmd = ["sudo", "-n", "smartctl", "-a", "-j", f"/dev/{drive_name}"]
+                result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
+                
+            # 3. Pkexec fallback
+            if not result.stdout.strip() or result.returncode == 2 or is_perm_denied(result.stdout):
+                cmd = ["pkexec", "smartctl", "-a", "-j", f"/dev/{drive_name}"]
+                result = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
         
         if not result.stdout.strip():
             return {"status": "Unavailable"}

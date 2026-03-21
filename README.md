@@ -2,11 +2,11 @@
 
 > A compact, information-dense drive analysis tool for Linux — built for speed, not fluff.
 
-![Platform](https://img.shields.io/badge/platform-Linux-lightgrey?style=flat-square)
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-lightgrey?style=flat-square)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square)
 ![PyQt6](https://img.shields.io/badge/UI-PyQt6-informational?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![Version](https://img.shields.io/badge/version-1.2.1-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.3.0-orange?style=flat-square)
 
 Storage Detailer extracts deep hardware telemetry from your connected storage devices and presents it in a dense, scrollbar-free interface. No bloat. No electron. No nonsense — just raw drive data, fast.
 
@@ -27,6 +27,8 @@ Storage Detailer extracts deep hardware telemetry from your connected storage de
 - **Snapshot export** — one-click hardware data capture cropped to just the stats panel, saved to `~/Pictures/Screenshots` as a timestamped PNG
 - **Amazon quick-search** — opens a pre-built affiliate search for the scanned drive model with base-10 capacity string appended for accuracy
 - **DuckDuckGo web intel** — pulls a live spec snippet for the scanned model with resilient CSS fallback selectors
+- **Cross-platform** — Native Linux `lsblk` and Windows PowerShell `Get-PhysicalDisk` compatibility for storage parsing
+- **About Menu** — Accessible application information embedded via GUI
 - **Threaded architecture** — all subprocess and network calls run off the main thread via `QThread`; UI never freezes
 - **SMART privilege escalation** — silently attempts standard access, falls back to `sudo -n`, then `pkexec` if needed
 - **Antigravity theme** — greyscale palette, 1px silver borders, monospace value labels, fixed 680×500 viewport
