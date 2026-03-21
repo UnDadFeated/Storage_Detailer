@@ -1,6 +1,6 @@
 # Storage Detailer
 
-> A compact, information-dense drive analysis tool for Linux — built for speed, not fluff.
+> A compact, information-dense drive analysis tool for Linux & Windows — built for speed, not fluff.
 
 ![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-lightgrey?style=flat-square)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square)
