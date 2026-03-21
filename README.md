@@ -6,7 +6,7 @@
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square)
 ![PyQt6](https://img.shields.io/badge/UI-PyQt6-informational?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![Version](https://img.shields.io/badge/version-1.3.0-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.3.1-orange?style=flat-square)
 
 Storage Detailer extracts deep hardware telemetry from your connected storage devices and presents it in a dense, scrollbar-free interface. No bloat. No electron. No nonsense — just raw drive data, fast.
 
@@ -58,19 +58,29 @@ sudo apt install smartmontools util-linux python3-pyqt6
 
 ## Installation
 
+### Linux
 ```bash
 git clone https://github.com/UnDadFeated/Storage_Detailer.git
 cd Storage_Detailer
 python main.py
 ```
+No virtual environment required. No pip dependencies beyond PyQt6.
+
+### Windows
+1. Install **Python 3.10+**
+2. Install **PyQt6**: `pip install PyQt6`
+3. Download and install **smartmontools** for Windows from their official website and add it to your system PATH.
+4. Clone the repository and run `python main.py`. Note: Run as Administrator to read complete SMART data.
 
 No virtual environment required. No pip dependencies beyond PyQt6.
 
 ---
 
-## SMART Permissions (Recommended Setup)
+## SMART Permissions (Linux-Only Setup)
 
-By default, `smartctl` requires root to read raw drive telemetry. Storage Detailer will attempt `sudo -n` and `pkexec` fallbacks automatically, but the cleanest solution is a one-time udev rule:
+> **Note for Windows users**: The following PolKit/udev instructions only apply to Linux distributions.
+
+By default, `smartctl` requires root to read raw drive telemetry. Storage Detailer will attempt `sudo -n` and `pkexec` fallbacks automatically, but the cleanest solution is a one-time udev rule on Linux:
 
 **1. Add your user to the `disk` group:**
 ```bash

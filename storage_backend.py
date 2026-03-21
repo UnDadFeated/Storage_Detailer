@@ -24,13 +24,13 @@ def format_bytes(n):
         return str(n)
 
 def validate_drive_name(drive_name):
-    if not re.match(r"^[a-zA-Z0-9]+$", str(drive_name)):
+    if not re.match(r"^([a-zA-Z0-9]+|PhysicalDrive\d+)$", str(drive_name)):
         raise ValueError("Invalid drive name format")
 
 def get_physical_drives():
     try:
         if sys.platform == "win32":
-            cmd = ["powershell", "-NoProfile", "-Command", "Get-PhysicalDisk | Select-Object DeviceID,Model,Size,BusType,MediaType | ConvertTo-Json"]
+            cmd = ["powershell", "-NoProfile", "-Command", "Get-PhysicalDisk | Select-Object DeviceID,Model,Size,BusType,MediaType,FirmwareVersion,SerialNumber | ConvertTo-Json"]
             creation_flags = 0x08000000 # CREATE_NO_WINDOW
             result = subprocess.run(cmd, capture_output=True, text=True, check=True, creationflags=creation_flags)
             if not result.stdout.strip():
@@ -66,7 +66,7 @@ def get_drive_details(drive_name):
         validate_drive_name(drive_name)
         if sys.platform == "win32":
             device_id = str(drive_name).replace("PhysicalDrive", "")
-            cmd = ["powershell", "-NoProfile", "-Command", f"Get-PhysicalDisk | Where-Object DeviceID -eq '{device_id}' | Select-Object DeviceID,Model,Size,BusType,MediaType | ConvertTo-Json"]
+            cmd = ["powershell", "-NoProfile", "-Command", f"Get-PhysicalDisk | Where-Object DeviceID -eq '{device_id}' | Select-Object DeviceID,Model,Size,BusType,MediaType,FirmwareVersion,SerialNumber | ConvertTo-Json"]
             creation_flags = 0x08000000
             result = subprocess.run(cmd, capture_output=True, text=True, check=True, creationflags=creation_flags)
             if not result.stdout.strip():
@@ -81,7 +81,9 @@ def get_drive_details(drive_name):
                 "model": str(d.get("Model", "")).strip(),
                 "size": str(d.get("Size", "0")),
                 "tran": str(d.get("BusType", "")).strip().lower(),
-                "rota": rota
+                "rota": rota,
+                "rev": str(d.get("FirmwareVersion", "")).strip() or "N/A",
+                "serial": str(d.get("SerialNumber", "")).strip() or "N/A"
             }
         else:
             cmd = ["lsblk", "-p", "-J", "-b", "-o", "NAME,MODEL,VENDOR,REV,SERIAL,WWN,SIZE,TRAN,ROTA,SCHED,PATH,RQ-SIZE,LOG-SEC,PHY-SEC,MIN-IO,OPT-IO,DISC-GRAN,DISC-MAX,DISC-ZERO", f"/dev/{drive_name}"]

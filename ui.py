@@ -1,7 +1,8 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QComboBox, QPushButton, QLabel, QFrame, QGridLayout, QProgressBar
+    QComboBox, QPushButton, QLabel, QFrame, QGridLayout, QProgressBar,
+    QMessageBox
 )
 from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtCore import Qt, pyqtSignal, QThread, QUrl, QRect
@@ -114,7 +115,7 @@ class WorkerThread(QThread):
 class StorageDetailer(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Storage Detailer v1.3.0")
+        self.setWindowTitle("Storage Detailer v1.3.1")
         self.setFixedSize(680, 500) 
         
         self.worker = None
@@ -360,12 +361,14 @@ class StorageDetailer(QMainWindow):
             QDesktopServices.openUrl(QUrl(url))
             
     def on_about_clicked(self):
-        from PyQt6.QtWidgets import QMessageBox
         msg = QMessageBox(self)
         msg.setWindowTitle("About Storage Detailer")
-        msg.setText("<h2>Storage Detailer v1.3.0</h2>"
-                    "<p>A cross-platform storage analysis tool.</p>"
-                    "<p>Created by UnDadFeated.</p>")
+        msg.setTextFormat(Qt.TextFormat.RichText)
+        msg.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
+        msg.setText("<h2>Storage Detailer v1.3.1</h2>"
+                    "<p>A compact, information-dense drive analysis tool for Linux and Windows — built for speed, not fluff.</p>"
+                    "<p>Released under the MIT License.</p>"
+                    "<p>Created by <a href='https://github.com/UnDadFeated/Storage_Detailer'>UnDadFeated</a>.</p>")
         msg.exec()
             
     def update_ui_with_details(self, details):

@@ -1,6 +1,14 @@
 # CHANGELOG.md
 
 <!-- ANCHOR -->
+## [1.3.1] - 2026-03-20
+### Fixed
+- Hardened Windows `validate_drive_name` bounds permitting native `PhysicalDriveX` string resolutions correctly.
+- Extended PowerShell data hooks aggressively pulling `FirmwareVersion` and `SerialNumber` into the UI explicitly.
+- Shifted `QMessageBox` framework integrations strictly to global headers and pushed explicit `RichText` formatting into the About dialog binding dynamic GitHub routing properly.
+- Expanded dual-OS architecture instructions cleanly segregating Linux explicit rules.
+
+
 ## [1.3.0] - 2026-03-20
 ### Added
 - Cross-platform Windows compatibility in `storage_backend.py` via PowerShell/WMI fallback mechanism.
