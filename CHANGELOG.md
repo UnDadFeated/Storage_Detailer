@@ -1,6 +1,15 @@
 # CHANGELOG.md
 
 <!-- ANCHOR -->
+## [1.4.0] - 2026-05-22
+### Fixed
+- Fixed false-evaluation bug in `_get` where falsy values (like `0` or `False`) were overwritten with `N/A`.
+- Normalized type (`rota`) detection to support both boolean (`true`/`false`) and integer (`1`/`0`) representations, fixing SSD drive type identification on Linux block devices.
+- Hardened thread management with subclassed `closeEvent` window cleanup, ensuring active `WorkerThread` operations terminate gracefully to prevent application exit crashes.
+- Deduplicated `is_perm_denied` string pattern evaluations within `storage_backend.py`.
+- Replaced custom HTML entity regex replacements in DuckDuckGo scraper with robust `html.unescape` parsing.
+- Enhanced regex validation within `validate_drive_name` to permit dashes and underscores in system block device paths.
+
 ## [1.3.1] - 2026-03-20
 ### Fixed
 - Hardened Windows `validate_drive_name` bounds permitting native `PhysicalDriveX` string resolutions correctly.

@@ -6,6 +6,7 @@ import urllib.parse
 import re
 import ssl
 import sys
+import html
 
 def format_bytes(n):
     if n is None or n == "":
@@ -24,7 +25,7 @@ def format_bytes(n):
         return str(n)
 
 def validate_drive_name(drive_name):
-    if not re.match(r"^([a-zA-Z0-9]+|PhysicalDrive\d+)$", str(drive_name)):
+    if not re.match(r"^([a-zA-Z0-9_\-]+|PhysicalDrive\d+)$", str(drive_name)):
         raise ValueError("Invalid drive name format")
 
 def get_physical_drives():
@@ -108,7 +109,7 @@ def get_smart_info(drive_name):
             try:
                 d = json.loads(outp)
                 for msg in d.get("smartctl", {}).get("messages", []):
-                    if "Permission denied" in msg.get("string", "") or "Permission denied" in msg.get("string", ""):
+                    if "Permission denied" in msg.get("string", ""):
                         return True
             except (ValueError, TypeError):
                 pass
@@ -244,7 +245,7 @@ def get_web_info(model, serial):
                 match = re.search(r'<a class="result__body[^>]*>(.*?)</a>', html, re.DOTALL | re.IGNORECASE)
             if match:
                 snippet = re.sub(r'<[^>]+>', '', match.group(1)).strip()
-                snippet = snippet.replace('&#39;', "'").replace('&quot;', '"').replace('&amp;', '&')
+                snippet = html.unescape(snippet)
                 if len(snippet) > 130:
                     snippet = snippet[:127] + "..."
                 return snippet

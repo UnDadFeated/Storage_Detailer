@@ -115,7 +115,7 @@ class WorkerThread(QThread):
 class StorageDetailer(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Storage Detailer v1.3.1")
+        self.setWindowTitle("Storage Detailer v1.4")
         self.setFixedSize(680, 500) 
         
         self.worker = None
@@ -365,16 +365,24 @@ class StorageDetailer(QMainWindow):
         msg.setWindowTitle("About Storage Detailer")
         msg.setTextFormat(Qt.TextFormat.RichText)
         msg.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
-        msg.setText("<h2>Storage Detailer v1.3.1</h2>"
+        msg.setText("<h2>Storage Detailer v1.4</h2>"
                     "<p>A compact, information-dense drive analysis tool for Linux and Windows — built for speed, not fluff.</p>"
                     "<p>Released under the MIT License.</p>"
                     "<p>Created by <a href='https://github.com/UnDadFeated/Storage_Detailer'>UnDadFeated</a>.</p>")
         msg.exec()
             
+    def closeEvent(self, event):
+        if self.worker and self.worker.isRunning():
+            self.worker.terminate()
+            self.worker.wait()
+        event.accept()
+
     def update_ui_with_details(self, details):
         def _get(key, default="N/A"):
             val = details.get(key)
-            return str(val).strip() if val else default
+            if val is None or val == "":
+                return default
+            return str(val).strip()
             
         model_str = _get("model")
         self.labels["model"].setText(model_str)
@@ -415,8 +423,8 @@ class StorageDetailer(QMainWindow):
         self.labels["disc-max"].setText(format_bytes(details.get("disc-max", 0)))
         self.labels["disc-zero"].setText(trim_zero)
         
-        rota_val = str(_get("rota", ""))
-        rota = "HDD" if rota_val == "1" else ("SSD/Flash" if rota_val == "0" else "Unknown")
+        rota_val = str(_get("rota", "")).strip().lower()
+        rota = "HDD" if rota_val in ("1", "true") else ("SSD/Flash" if rota_val in ("0", "false") else "Unknown")
         self.labels["rota"].setText(rota)
 
     def update_ui_with_smart(self, smart):
